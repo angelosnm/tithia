@@ -1,0 +1,84 @@
+- name: Install Apache Spark
+  hosts: spark
+  become: yes
+  vars:
+    spark_version: 3.5.1
+    hadoop_version: 3.3  
+    spark_download_url: "https://apache.org/dyn/closer.lua/spark/spark-{{ spark_version }}/spark-{{ spark_version }}-bin-hadoop{ hadoop_version }}.tgz"
+    spark_install_dir: /opt/spark
+  tasks:
+    - name: Run system updates
+      apt:
+        update_cache: yes
+        upgrade: dist
+        cache_valid_time: 3600
+
+    - name: Install Java
+      apt:
+        name: openjdk-11-jdk
+        state: present
+
+    - name: Create spark group
+      group:
+        name: spark
+        state: present
+
+    - name: Create spark user
+      user:
+        name: spark
+        group: spark
+        create_home: yes
+        shell: /bin/bash
+
+#     - name: Download Spark
+#       get_url:
+#         url: "{{ spark_download_url }}"
+#         dest: /tmp/spark-{{ spark_version }}-bin-hadoop{{ hadoop_version }}.tgz
+
+#     - name: Extract Spark
+#       unarchive:
+#         src: /tmp/spark-{{ spark_version }}-bin-hadoop{{ hadoop_version }}.tgz
+#         dest: /opt
+#         remote_src: yes
+#         creates: "{{ spark_install_dir }}/spark-{{ spark_version }}-bin-hadoop{{ hadoop_version }}"
+
+#     - name: Create symlink to Spark
+#       file:
+#         src: "{{ spark_install_dir }}/spark-{{ spark_version }}-bin-hadoop{{ hadoop_version }}"
+#         dest: "{{ spark_install_dir }}/spark"
+#         state: link
+
+#     - name: Change ownership of Spark directory
+#       file:
+#         path: "{{ spark_install_dir }}/spark-{{ spark_version }}-bin-hadoop{{ hadoop_version }}"
+#         owner: spark
+#         group: spark
+#         recurse: yes
+
+# - name: Configure Spark Master
+#   hosts: master
+#   become: yes
+#   tasks:
+#     - name: Configure Spark master
+#       lineinfile:
+#         path: "{{ spark_install_dir }}/spark/conf/spark-env.sh"
+#         line: "SPARK_MASTER_HOST=$(hostname)"
+#         create: yes
+
+#     - name: Start Spark master
+#       command: "{{ spark_install_dir }}/spark/sbin/start-master.sh"
+#       become_user: spark
+
+# - name: Configure Spark Slaves
+#   hosts: slaves
+#   become: yes
+#   tasks:
+#     - name: Add Spark master to slaves file
+#       lineinfile:
+#         path: "{{ spark_install_dir }}/spark/conf/slaves"
+#         line: "master.example.com"
+#         create: yes
+
+#     - name: Start Spark slave
+#       command: "{{ spark_install_dir }}/spark/sbin/start-slave.sh spark://master.example.com:7077"
+#       become_user: spark

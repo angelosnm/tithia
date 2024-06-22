@@ -2,23 +2,23 @@
 Vagrant.configure("2") do |config|
   
   # Define the base box to use
-  config.vm.box = "debian/buster64"
+  config.vm.box = "debian/bookworm64"
 
   # Define the first VM
-  config.vm.define "debian-host1" do |host1|
-    host1.vm.hostname = "debian-host1"
+  config.vm.define "spark-master" do |host1|
+    host1.vm.hostname = "spark-master"
     host1.vm.network "private_network", ip: "192.168.56.101"
   end
 
   # Define the second VM
-  config.vm.define "debian-host2" do |host2|
-    host2.vm.hostname = "debian-host2"
+  config.vm.define "spark-worker-1" do |host2|
+    host2.vm.hostname = "spark-worker-1"
     host2.vm.network "private_network", ip: "192.168.56.102"
   end
 
   # Define the third VM
-  config.vm.define "debian-host3" do |host3|
-    host3.vm.hostname = "debian-host3"
+  config.vm.define "spark-worker-2" do |host3|
+    host3.vm.hostname = "spark-worker-2"
     host3.vm.network "private_network", ip: "192.168.56.103"
   end
 
