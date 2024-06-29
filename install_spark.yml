@@ -3,8 +3,8 @@
   become: yes
   vars:
     spark_version: 3.5.1
-    hadoop_version: 3
-    spark_download_url: "https://dlcdn.apache.org/spark/spark-{{ spark_version }}/spark-{{ spark_version }}-bin-hadoop{{ hadoop_version }}.tgz"
+    hadoop_version: 3.3  
+    spark_download_url: "https://apache.org/dyn/closer.lua/spark/spark-{{ spark_version }}/spark-{{ spark_version }}-bin-hadoop{ hadoop_version }}.tgz"
     spark_install_dir: /opt/spark
   tasks:
     - name: Run system updates
@@ -15,11 +15,8 @@
 
     - name: Install Java
       apt:
-        name:
-          - default-jre
-          - default-jdk
+        name: openjdk-11-jdk
         state: present
-        update_cache: yes
 
     - name: Create spark group
       group:
@@ -33,17 +30,17 @@
         create_home: yes
         shell: /bin/bash
 
-    - name: Download Spark
-      get_url:
-        url: "{{ spark_download_url }}"
-        dest: /tmp/spark-{{ spark_version }}-bin-hadoop{{ hadoop_version }}.tgz
+#     - name: Download Spark
+#       get_url:
+#         url: "{{ spark_download_url }}"
+#         dest: /tmp/spark-{{ spark_version }}-bin-hadoop{{ hadoop_version }}.tgz
 
-    - name: Extract Spark
-      unarchive:
-        src: /tmp/spark-{{ spark_version }}-bin-hadoop{{ hadoop_version }}.tgz
-        dest: /opt
-        remote_src: yes
-        creates: "{{ spark_install_dir }}/spark-{{ spark_version }}-bin-hadoop{{ hadoop_version }}"
+#     - name: Extract Spark
+#       unarchive:
+#         src: /tmp/spark-{{ spark_version }}-bin-hadoop{{ hadoop_version }}.tgz
+#         dest: /opt
+#         remote_src: yes
+#         creates: "{{ spark_install_dir }}/spark-{{ spark_version }}-bin-hadoop{{ hadoop_version }}"
 
 #     - name: Create symlink to Spark
 #       file:

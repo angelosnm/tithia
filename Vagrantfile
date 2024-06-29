@@ -4,8 +4,6 @@ Vagrant.configure("2") do |config|
   # Define the base box to use
   config.vm.box = "debian/bookworm64"
 
-  config.vm.synced_folder '.', '/vagrant', disabled: true # Configuration for WSL setups where issue with synced folders exists (https://github.com/hashicorp/vagrant/issues/10576#issuecomment-452793401)
-
   # Define the first VM
   config.vm.define "spark-master" do |host1|
     host1.vm.hostname = "spark-master"
