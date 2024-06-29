@@ -13,6 +13,11 @@
         upgrade: dist
         cache_valid_time: 3600
 
+    - name: Install OS packages
+      apt:
+        name: acl
+        state: present
+
     - name: Install Java
       apt:
         name:
@@ -33,44 +38,53 @@
         create_home: yes
         shell: /bin/bash
 
+    - name: Create Spark directory
+      ansible.builtin.file:
+        path: "{{ spark_install_dir }}/releases/artifacts"
+        state: directory
+
     - name: Download Spark
       get_url:
         url: "{{ spark_download_url }}"
-        dest: /tmp/spark-{{ spark_version }}-bin-hadoop{{ hadoop_version }}.tgz
+        dest: "{{ spark_install_dir }}/releases/artifacts/spark-{{ spark_version }}-bin-hadoop{{ hadoop_version }}.tgz"
 
     - name: Extract Spark
       unarchive:
-        src: /tmp/spark-{{ spark_version }}-bin-hadoop{{ hadoop_version }}.tgz
-        dest: /opt
+        src: "{{ spark_install_dir }}/releases/artifacts/spark-{{ spark_version }}-bin-hadoop{{ hadoop_version }}.tgz"
+        dest: "{{ spark_install_dir }}/releases"        
         remote_src: yes
-        creates: "{{ spark_install_dir }}/spark-{{ spark_version }}-bin-hadoop{{ hadoop_version }}"
 
-#     - name: Create symlink to Spark
-#       file:
-#         src: "{{ spark_install_dir }}/spark-{{ spark_version }}-bin-hadoop{{ hadoop_version }}"
-#         dest: "{{ spark_install_dir }}/spark"
-#         state: link
+    - name: Create symlink to Spark
+      file:
+        src: "{{ spark_install_dir }}/releases/spark-{{ spark_version }}-bin-hadoop{{ hadoop_version }}"
+        dest: "{{ spark_install_dir }}/active"
+        state: link
 
-#     - name: Change ownership of Spark directory
-#       file:
-#         path: "{{ spark_install_dir }}/spark-{{ spark_version }}-bin-hadoop{{ hadoop_version }}"
-#         owner: spark
-#         group: spark
-#         recurse: yes
+    - name: Change ownership of Spark directory
+      file:
+        path: "{{ spark_install_dir }}"
+        owner: spark
+        group: spark
+        recurse: yes
 
-# - name: Configure Spark Master
-#   hosts: master
-#   become: yes
-#   tasks:
-#     - name: Configure Spark master
-#       lineinfile:
-#         path: "{{ spark_install_dir }}/spark/conf/spark-env.sh"
-#         line: "SPARK_MASTER_HOST=$(hostname)"
-#         create: yes
+- name: Configure Spark Master
+  hosts: master
+  become: yes
+  vars:
+    spark_version: 3.5.1
+    hadoop_version: 3
+    spark_download_url: "https://dlcdn.apache.org/spark/spark-{{ spark_version }}/spark-{{ spark_version }}-bin-hadoop{{ hadoop_version }}.tgz"
+    spark_install_dir: /opt/spark
+  tasks:
+    - name: Configure Spark master
+      lineinfile:
+        path: "{{ spark_install_dir }}/active/conf/spark-env.sh"
+        line: "SPARK_MASTER_HOST=$(hostname)"
+        create: yes
 
-#     - name: Start Spark master
-#       command: "{{ spark_install_dir }}/spark/sbin/start-master.sh"
-#       become_user: spark
+    - name: Start Spark master
+      command: "{{ spark_install_dir }}/active/sbin/start-master.sh"
+      become_user: spark
 
 # - name: Configure Spark Slaves
 #   hosts: slaves
