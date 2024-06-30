@@ -85,6 +85,42 @@
     - name: Start Spark master
       command: "{{ spark_install_dir }}/active/sbin/start-master.sh"
       become_user: spark
+    
+    - name: Create Spark systemd service file
+      become: yes
+      copy:
+        dest: /etc/systemd/system/spark.service
+        content: |
+          [Unit]
+          Description=Apache Spark (Master)
+          After=network.target          
+
+          [Service]
+          Type=forking
+          User=spark
+          Group=spark
+          ExecStart={{ spark_install_dir }}/active/sbin/start-master.sh
+          ExecStop={{ spark_install_dir }}/active/sbin/stop-master.sh
+          Restart=on-failure
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Reload systemd daemon
+      become: yes
+      command: systemctl daemon-reload
+
+    - name: Enable Spark service
+      become: yes
+      systemd:
+        name: spark
+        enabled: yes
+
+    - name: Start Spark service
+      become: yes
+      systemd:
+        name: spark
+        state: started
 
 # - name: Configure Spark Slaves
 #   hosts: slaves
