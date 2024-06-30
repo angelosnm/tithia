@@ -79,12 +79,15 @@
     - name: Configure Spark master
       lineinfile:
         path: "{{ spark_install_dir }}/active/conf/spark-env.sh"
-        line: "SPARK_MASTER_HOST=$(hostname)"
+        line: "SPARK_MASTER_HOST={{ groups['master'][0] }}"
         create: yes
 
-    - name: Start Spark master
-      command: "{{ spark_install_dir }}/active/sbin/start-master.sh"
-      become_user: spark
+    - name: Change config file ownership
+      file:
+        path: "{{ spark_install_dir }}/active/conf/spark-env.sh"
+        owner: spark
+        group: spark
+        state: file
     
     - name: Create Spark systemd service file
       become: yes
