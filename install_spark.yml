@@ -137,6 +137,38 @@
         line: "{{ groups['master'][0] }}"
         create: yes
 
-    - name: Start Spark worker
-      command: "{{ spark_install_dir }}/active/sbin/start-worker.sh spark://{{ groups['master'][0] }}:7077"
-      become_user: spark
+    - name: Create Spark systemd service file
+      become: yes
+      copy:
+        dest: /etc/systemd/system/spark.service
+        content: |
+          [Unit]
+          Description=Apache Spark (Master)
+          After=network.target          
+
+          [Service]
+          Type=forking
+          User=spark
+          Group=spark
+          ExecStart={{ spark_install_dir }}/active/sbin/start-worker.sh spark://{{ groups['master'][0] }}:7077
+          ExecStop={{ spark_install_dir }}/active/sbin/stop-worker.sh
+          Restart=on-failure
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Reload systemd daemon
+      become: yes
+      command: systemctl daemon-reload
+
+    - name: Enable Spark service
+      become: yes
+      systemd:
+        name: spark
+        enabled: yes
+
+    - name: Start Spark service
+      become: yes
+      systemd:
+        name: spark
+        state: started
