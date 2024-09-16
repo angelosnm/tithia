@@ -2,7 +2,7 @@
   hosts: spark
   become: yes
   vars:
-    spark_version: 3.5.1
+    spark_version: 3.5.2
     hadoop_version: 3
     spark_download_url: "https://dlcdn.apache.org/spark/spark-{{ spark_version }}/spark-{{ spark_version }}-bin-hadoop{{ hadoop_version }}.tgz"
     spark_install_dir: /opt/spark
@@ -71,7 +71,7 @@
   hosts: master
   become: yes
   vars:
-    spark_version: 3.5.1
+    spark_version: 3.5.2
     hadoop_version: 3
     spark_download_url: "https://dlcdn.apache.org/spark/spark-{{ spark_version }}/spark-{{ spark_version }}-bin-hadoop{{ hadoop_version }}.tgz"
     spark_install_dir: /opt/spark
@@ -125,16 +125,18 @@
         name: spark
         state: started
 
-# - name: Configure Spark Slaves
-#   hosts: slaves
-#   become: yes
-#   tasks:
-#     - name: Add Spark master to slaves file
-#       lineinfile:
-#         path: "{{ spark_install_dir }}/spark/conf/slaves"
-#         line: "master.example.com"
-#         create: yes
+- name: Configure Spark Workers
+  hosts: workers
+  become: yes
+  vars:
+    spark_install_dir: /opt/spark
+  tasks:
+    - name: Add Spark master to workers file
+      lineinfile:
+        path: "{{ spark_install_dir }}/active/conf/workers"
+        line: "{{ groups['master'][0] }}"
+        create: yes
 
-#     - name: Start Spark slave
-#       command: "{{ spark_install_dir }}/spark/sbin/start-slave.sh spark://master.example.com:7077"
-#       become_user: spark
+    - name: Start Spark worker
+      command: "{{ spark_install_dir }}/active/sbin/start-worker.sh spark://{{ groups['master'][0] }}:7077"
+      become_user: spark
