@@ -39,3 +39,9 @@ Below command uses the `--user` argument in order to define with which user will
 ```
 ansible-playbook -i hosts.ini --user vagrant install_spark.yml
 ```
+
+## Local Docker environment
+
+The `docker-compose.yaml` file has a preconfigured containerized environment for interracting with the Spark cluster.
+
+Simply `docker compose up` and then execute `docker logs spark` to find the token.
