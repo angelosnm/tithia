@@ -1,3 +1,17 @@
+# Tithia
+
+Born from the Sky and Earth, <em>Tithia</em> is the perfect blend of two powerful forces. From the sky, we gather satellite data and maps, providing a bird's-eye view of our world. From the Earth, we harness geospatial insights—the very ground we walk on, rich with invaluable information.
+
+Together, they create <em>Tithia</em>. A cutting-edge platform designed to bring you the best of both worlds. Just as the union of Sky and Earth gave birth to <em>Tithia</em> in ancient times, today, our platform seamlessly merges advanced satellite imagery with precise geospatial data, offering unparalleled insights.
+
+<em>Tithia</em>, because understanding the world starts from above, and ends beneath our feet.
+
+# Architecture
+
+![alt text](resources/tithia-architecture.png "Title")
+
+# Documentation
+
 For develpoment purposes, `Vagrant` has been utilized for provisioning of playground virtual machines.
 Thus this requires `VirtualBox` to be installed on host machine as this is the default provider of this setup.
 
