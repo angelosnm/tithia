@@ -45,3 +45,46 @@ ansible-playbook -i hosts.ini --user vagrant install_spark.yml
 The `docker-compose.yaml` file has a preconfigured containerized environment for interracting with the Spark cluster.
 
 Simply `docker compose up` and then execute `docker logs spark` to find the token.
+
+## Kubernetes
+
+### Ingress NGINX Controller
+
+`helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx`
+
+`helm repo update`
+
+`helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx -n ingress-nginx --create-namespace -f ./kube/ingress-nginx/values.yaml --version 4.11.2`
+
+
+### cert-manager
+
+`helm repo add jetstack https://charts.jetstack.io`
+
+`helm repo update`
+
+`helm show values jetstack/cert-manager > ./kube/cert-manager/values.yaml`
+
+`helm upgrade --install cert-manager jetstack/cert-manager -n cert-manager --create-namespace --version 1.15.3 --set crds.enabled=true`
+
+#### HTTP Cluster Issuer Configuration (https://cert-manager.io/docs/configuration/acme/dns01/route53/)
+Create a ClusterIssuer component which is responsible for making HTTP challenges to verify the ownership of the domain:
+
+`kubectl apply -f ./kube/cert-manager/clusterIssuer-letsencrypt-http.yaml`
+
+
+### Longhorn
+
+**`open-iscsi` is required to be installed on the hosts prior installing Longhorn
+
+`helm repo add longhorn https://charts.longhorn.io`
+
+`helm repo update`
+
+`helm show values longhorn/longhorn > ./kube/longhorn/values.yaml`
+
+`helm upgrade --install longhorn longhorn/longhorn -n longhorn --create-namespace --version 1.7.1 -f ./kube/longhorn/values.yaml`
+
+`k apply -f ./kube/longhorn/certificate.yaml`
+
+`k apply -f ./kube/longhorn/ingress.yaml`

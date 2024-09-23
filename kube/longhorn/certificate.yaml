@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: longhorn-tithia-scio-services
+  namespace: longhorn
+spec:
+  secretName: longhorn-tithia-scio-services-tls
+  issuerRef:
+    name: letsencrypt-http
+    kind: ClusterIssuer
+  commonName: "longhorn.tithia.scio.services"
+  dnsNames:
+  - "longhorn.tithia.scio.services"
