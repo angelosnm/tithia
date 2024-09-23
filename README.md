@@ -101,4 +101,8 @@ Create a ClusterIssuer component which is responsible for making HTTP challenges
 
 `k apply -f ./kube/longhorn/certificate.yaml`
 
+Creating basic-auth credentials
+`USER=koukos; PASSWORD=metagkisi; echo "${USER}:$(openssl passwd -stdin -apr1 <<< ${PASSWORD})" >> ./kube/longhorn/auth`
+`kubectl -n longhorn create secret generic basic-auth --from-file=./kube/longhorn/auth`
+
 `k apply -f ./kube/longhorn/ingress.yaml`
