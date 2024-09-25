@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  namespace: keycloak
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: keycloak
+  template:
+    metadata:
+      labels:
+        app: keycloak
+    spec:
+      securityContext:        
+        runAsUser: 0 # Pod needs to run as root due to longhorn permissions (https://longhorn.io/docs/1.7.1/nodes-and-volumes/volumes/pvc-ownership-and-permission/)
+      containers:
+      - envFrom:
+        - secretRef:
+            name: keycloak-secret   
+        name: keycloak
+        image: quay.io/keycloak/keycloak:25.0
+        ports:
+          - containerPort: 8443
+        command:
+          - "/opt/keycloak/bin/kc.sh"
+          - "start"
+        volumeMounts:
+          - name: keycloak-data
+            mountPath: /opt/keycloak/data
+            subPath: kcdata
+          - name: tls-certs
+            mountPath: /etc/certs
+            readOnly: true
+      volumes:
+        - name: keycloak-data
+          persistentVolumeClaim:
+            claimName: keycloak-pvc
+        - name: tls-certs
+          secret:
+            secretName: auth-tithia-scio-services-tls

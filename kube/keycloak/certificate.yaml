@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: auth-tithia-scio-services
+  namespace: keycloak
+spec:
+  secretName: auth-tithia-scio-services-tls
+  issuerRef:
+    name: letsencrypt-http
+    kind: ClusterIssuer
+  commonName: "auth.tithia.scio.services"
+  dnsNames:
+  - "auth.tithia.scio.services"
