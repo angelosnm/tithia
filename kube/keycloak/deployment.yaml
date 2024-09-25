@@ -27,16 +27,15 @@ spec:
           - "/opt/keycloak/bin/kc.sh"
           - "start"
         volumeMounts:
-          - name: keycloak-data
-            mountPath: /opt/keycloak/data
-            subPath: kcdata
+          - name: keycloak-providers
+            mountPath: /opt/keycloak/providers
           - name: tls-certs
             mountPath: /etc/certs
             readOnly: true
       volumes:
-        - name: keycloak-data
+        - name: keycloak-providers
           persistentVolumeClaim:
-            claimName: keycloak-pvc
+            claimName: keycloak-providers-pvc
         - name: tls-certs
           secret:
             secretName: auth-tithia-scio-services-tls

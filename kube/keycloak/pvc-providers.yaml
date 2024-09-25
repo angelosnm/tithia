@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: keycloak-pvc
+  name: keycloak-providers-pvc
   namespace: keycloak
   labels:
-    pvc: keycloak-data
+    pvc: keycloak-providers
 spec:
   accessModes:
     - ReadWriteOnce
