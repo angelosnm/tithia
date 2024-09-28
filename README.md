@@ -64,22 +64,26 @@ Simply `docker compose up` and then execute `docker logs spark` to find the toke
 
 ### Ingress NGINX Controller
 
-`helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx`
+```
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 
-`helm repo update`
+helm repo update
 
-`helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx -n ingress-nginx --create-namespace -f ./kube/ingress-nginx/values.yaml --version 4.11.2`
+helm upgrade --install ingress-nginx ingress-nginx/ingress-nginx -n ingress-nginx --create-namespace -f ./kube/ingress-nginx/values.yaml --version 4.11.2
+```
 
 
 ### cert-manager
 
-`helm repo add jetstack https://charts.jetstack.io`
+```
+helm repo add jetstack https://charts.jetstack.io
 
-`helm repo update`
+helm repo update
 
-`helm show values jetstack/cert-manager > ./kube/cert-manager/values.yaml`
+helm show values jetstack/cert-manager > ./kube/cert-manager/values.yaml
 
-`helm upgrade --install cert-manager jetstack/cert-manager -n cert-manager --create-namespace --version 1.15.3 --set crds.enabled=true`
+helm upgrade --install cert-manager jetstack/cert-manager -n cert-manager --create-namespace --version 1.15.3 --set crds.enabled=true
+```
 
 #### HTTP Cluster Issuer Configuration (https://cert-manager.io/docs/configuration/acme/dns01/route53/)
 Create a ClusterIssuer component which is responsible for making HTTP challenges to verify the ownership of the domain:
@@ -91,18 +95,65 @@ Create a ClusterIssuer component which is responsible for making HTTP challenges
 
 **`open-iscsi` is required to be installed on the hosts prior installing Longhorn
 
-`helm repo add longhorn https://charts.longhorn.io`
+```
+helm repo add longhorn https://charts.longhorn.io
 
-`helm repo update`
+helm repo update
 
-`helm show values longhorn/longhorn > ./kube/longhorn/values.yaml`
+helm show values longhorn/longhorn > ./kube/longhorn/values.yaml
 
-`helm upgrade --install longhorn longhorn/longhorn -n longhorn --create-namespace --version 1.7.1 -f ./kube/longhorn/values.yaml`
+helm upgrade --install longhorn longhorn/longhorn -n longhorn --create-namespace --version 1.7.1 -f ./kube/longhorn/values.yaml
 
-`k apply -f ./kube/longhorn/certificate.yaml`
+k apply -f ./kube/longhorn/certificate.yaml
+```
 
-Creating basic-auth credentials
-`USER=koukos; PASSWORD=metagkisi; echo "${USER}:$(openssl passwd -stdin -apr1 <<< ${PASSWORD})" >> ./kube/longhorn/auth`
-`kubectl -n longhorn create secret generic basic-auth --from-file=./kube/longhorn/auth`
+##### Creating basic-auth credentials for ingress
 
-`k apply -f ./kube/longhorn/ingress.yaml`
+```
+USER=koukos; PASSWORD=metagkisi; echo "${USER}:$(openssl passwd -stdin -apr1 <<< ${PASSWORD})" >> ./kube/longhorn/auth`
+
+kubectl -n longhorn create secret generic basic-auth --from-file=./kube/longhorn/auth
+
+k apply -f ./kube/longhorn/ingress.yaml
+```
+
+### db
+
+`Postgres` is used as the database of the system. (It is required for Keycloak & JupyterHub)
+
+```
+k apply -f ./kube/db
+```
+
+### Keycloak
+
+`providers` subdirectory (`/opt/keycloak/`) is persisted by PVC in order to deploy the [`keywind`](https://github.com/lukin/keywind/tree/master) theme.
+
+```
+k apply -f ./kube/keycloak
+```
+
+#### Keywind theme installation
+
+```
+git clone https://github.com/lukin/keywind.git
+docker run -it node:20 -v... 
+pnpm install
+pnpm build
+pnpm build:jar
+```
+##### Copy .jar file to Keycloak pod
+
+```
+k cp ...
+```
+
+
+### Jupyterhub
+```
+helm repo add jupyterhub https://jupyterhub.github.io/helm-chart/
+
+helm repo update
+
+helm show values jupyterhub/jupyterhub > jupyterhub/values.yaml
+```
