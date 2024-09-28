@@ -155,5 +155,5 @@ helm repo add jupyterhub https://jupyterhub.github.io/helm-chart/
 
 helm repo update
 
-helm show values jupyterhub/jupyterhub > jupyterhub/values.yaml
+helm show values jupyterhub/jupyterhub > ./kube/jupyterhub/values.yaml
 ```
