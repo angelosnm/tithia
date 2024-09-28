@@ -157,3 +157,17 @@ helm repo update
 
 helm show values jupyterhub/jupyterhub > ./kube/jupyterhub/values.yaml
 ```
+
+Prior installing the Helm chart, a relevant database needs to be created for `JupyterHub` on `Postgres`
+
+```
+
+
+```
+
+helm upgrade jupyterhub jupyterhub/jupyterhub --install --cleanup-on-fail -n jupyterhub --create-namespace --version 3.3.8 --timeout 1200s -f ./kube/jupyterhub/values.yaml --set hub.db.url="postgresql+psycopg2://myuser:mypassword@postgres.db.svc.cluster.local:5432/jupyterhub"
+
+k apply -f ./kube/jupyterhub/certificate.yaml
+
+k apply -f ./kube/jupyterhub/ingress.yaml
+```

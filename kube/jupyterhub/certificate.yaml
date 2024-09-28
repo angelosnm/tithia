@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: jupyterhub-tithia-scio-services
+  namespace: jupyterhub
+spec:
+  secretName: jupyterhub-tithia-scio-services-tls
+  issuerRef:
+    name: letsencrypt-http
+    kind: ClusterIssuer
+  commonName: "jupyterhub.tithia.scio.services"
+  dnsNames:
+  - "jupyterhub.tithia.scio.services"

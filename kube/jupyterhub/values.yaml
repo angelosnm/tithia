@@ -60,18 +60,8 @@ hub:
     ##   deployment of JupyterHub on k8s is to be possible.
     type: Recreate
   db:
-    type: sqlite-pvc
-    upgrade:
-    pvc:
-      annotations: {}
-      selector: {}
-      accessModes:
-        - ReadWriteOnce
-      storage: 1Gi
-      subPath:
-      storageClassName:
+    type: postgres
     url:
-    password:
   labels: {}
   annotations: {}
   command: []
@@ -182,7 +172,7 @@ proxy:
     rollingUpdate:
   # service relates to the proxy-public service
   service:
-    type: LoadBalancer
+    type: ClusterIP
     labels: {}
     annotations: {}
     nodePorts:
@@ -391,7 +381,7 @@ singleuser:
     capacity: 10Gi
     homeMountPath: /home/jovyan
     dynamic:
-      storageClass:
+      storageClass: longhorn
       pvcNameTemplate: claim-{username}{servername}
       volumeNameTemplate: volume-{username}{servername}
       storageAccessModes: [ReadWriteOnce]
@@ -413,7 +403,19 @@ singleuser:
   cmd: jupyterhub-singleuser
   defaultUrl:
   extraPodConfig: {}
-  profileList: []
+  profileList:
+    - display_name: "Low"
+      description: "Datascience Environment with Sample Notebooks (Resources: 16 GB RAM - 4 CPU)"
+      kubespawner_override:
+        image: sciohub/jupyter-eiar-notebook:1.0.2
+        cpu_limit: 1
+        mem_limit: 2G
+    - display_name: "Medium"
+      description: "Datascience Environment with Sample Notebooks (Resources: 32 GB RAM - 8 CPU)"
+      kubespawner_override:
+        image: sciohub/jupyter-eiar-notebook:1.0.2
+        cpu_limit: 2
+        mem_limit: 4G
 
 # scheduling relates to the user-scheduler pods and user-placeholder pods.
 scheduling:

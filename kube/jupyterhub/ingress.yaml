@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: jupyterhub
+  namespace: jupyterhub
+spec:
+  rules:
+  - host: jupyterhub.tithia.scio.services
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: proxy-public
+            port:
+              number: 80
+  tls:
+  - hosts:
+    - jupyterhub.tithia.scio.services
+    secretName: jupyterhub-tithia-scio-services-tls
