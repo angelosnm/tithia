@@ -8,7 +8,7 @@ Together, they create <em>Tithia</em>. A cutting-edge platform designed to bring
 
 # Architecture
 
-![alt text](resources/tithia-architecture.png "Title")
+![alt text](https://tithia-resources.s3.us-east-2.amazonaws.com/branding/tithia-architecture.png "Title")
 
 # Documentation
 
@@ -107,7 +107,16 @@ helm upgrade --install longhorn longhorn/longhorn -n longhorn --create-namespace
 k apply -f ./kube/longhorn/certificate.yaml
 ```
 
-##### Creating basic-auth credentials for ingress
+Create secret with S3 credentials for backup target
+
+```
+kubectl create secret generic aws-secret \
+    --from-literal=AWS_ACCESS_KEY_ID=<your-aws-access-key-id> \
+    --from-literal=AWS_SECRET_ACCESS_KEY=<your-aws-secret-access-key> \
+    -n longhorn
+```
+
+Create basic-auth credentials for ingress
 
 ```
 USER=koukos; PASSWORD=metagkisi; echo "${USER}:$(openssl passwd -stdin -apr1 <<< ${PASSWORD})" >> ./kube/longhorn/auth`
@@ -137,17 +146,21 @@ k apply -f ./kube/keycloak
 
 ```
 git clone https://github.com/lukin/keywind.git
-docker run -it node:20 -v... 
+cd keywind
+docker run --rm -it -v $(pwd):/app node:20 bash
+wget -qO- https://get.pnpm.io/install.sh | ENV="$HOME/.bashrc" SHELL="$(which bash)" bash - # pnpm installation
+source /root/.bashrc
+cd /app
 pnpm install
 pnpm build
 pnpm build:jar
 ```
-##### Copy .jar file to Keycloak pod
+Now exit the container and copy .jar file to Keycloak pod, to the `providers` directory.
 
 ```
-k cp ...
+cat out/keywind.jar | kubectl exec -i -n keycloak <pod-name> "--" sh -c "cat > /opt/keycloak/providers/keywind.jar"
 ```
-
+Then restart the Keycloak Deployment/Pod
 
 ### Jupyterhub
 ```
@@ -161,10 +174,6 @@ helm show values jupyterhub/jupyterhub > ./kube/jupyterhub/values.yaml
 Prior installing the Helm chart, a relevant database needs to be created for `JupyterHub` on `Postgres`
 
 ```
-
-
-```
-
 helm upgrade jupyterhub jupyterhub/jupyterhub --install --cleanup-on-fail -n jupyterhub --create-namespace --version 3.3.8 --timeout 1200s -f ./kube/jupyterhub/values.yaml --set hub.db.url="postgresql+psycopg2://myuser:mypassword@postgres.db.svc.cluster.local:5432/jupyterhub"
 
 k apply -f ./kube/jupyterhub/certificate.yaml
