@@ -62,6 +62,11 @@ Simply `docker compose up` and then execute `docker logs spark` to find the toke
 
 ## Kubernetes
 
+### Metrics-server
+```
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.7.2/components.yaml
+```
+
 ### Ingress NGINX Controller
 
 ```
