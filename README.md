@@ -159,6 +159,7 @@ k apply -f ./kube/longhorn/ingress.yaml
 `Postgres` is used as the database of the system. (It is required for Keycloak & JupyterHub)
 
 ```
+k create ns db
 k apply -f ./kube/db
 ```
 
@@ -167,6 +168,7 @@ k apply -f ./kube/db
 `providers` subdirectory (`/opt/keycloak/`) is persisted by PVC in order to deploy the [`keywind`](https://github.com/lukin/keywind/tree/master) theme.
 
 ```
+k create ns keycloak
 k apply -f ./kube/keycloak
 ```
 
@@ -202,7 +204,8 @@ helm show values jupyterhub/jupyterhub > ./kube/jupyterhub/values.yaml
 Prior installing the Helm chart, a relevant database needs to be created for `JupyterHub` on `Postgres`
 
 ```
-helm upgrade jupyterhub jupyterhub/jupyterhub --install --cleanup-on-fail -n jupyterhub --create-namespace --version 3.3.8 --timeout 1200s -f ./kube/jupyterhub/values.yaml --set hub.db.url="postgresql+psycopg2://myuser:mypassword@postgres.db.svc.cluster.local:5432/jupyterhub"
+
+helm upgrade jupyterhub jupyterhub/jupyterhub --install --cleanup-on-fail -n jupyterhub --create-namespace --version 3.3.8 --timeout 1200s -f ./kube/jupyterhub/values.yaml --set hub.db.url="postgresql+psycopg2://myuser:mypassword@postgres.db.svc.cluster.local:5432/jupyterhub" --set hub.config.GenericOAuthenticator.client_id="xxx" --set hub.config.GenericOAuthenticator.client_secret="yyy"
 
 k apply -f ./kube/jupyterhub/certificate.yaml
 
