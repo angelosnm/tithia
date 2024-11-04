@@ -211,15 +211,3 @@ k apply -f ./kube/jupyterhub/certificate.yaml
 
 k apply -f ./kube/jupyterhub/ingress.yaml
 ```
-
-### Spark
-
-```
-helm repo add bitnami https://charts.bitnami.com/bitnami
-
-helm repo update
-
-helm show values bitnami/spark > ./kube/spark/values.yaml
-
-helm upgrade spark bitnami/spark --install --cleanup-on-fail -n spark --create-namespace --version 9.2.11 -f ./kube/spark/values.yaml
-```
