@@ -1,8 +1,0 @@
-services:
-  spark:
-    image: quay.io/jupyter/pyspark-notebook:spark-3.5.2
-    container_name: spark
-    volumes:
-      - ./spark_examples:/home/jovyan/work
-    ports:
-      - 8888:8888

@@ -35,53 +35,27 @@ Architectural Diagram
 
 # Documentation
 
-For develpoment purposes, `Vagrant` has been utilized for provisioning of playground virtual machines.
-Thus this requires `VirtualBox` to be installed on host machine as this is the default provider of this setup.
+## Infrastructre
 
-Once this is installed, you can follow the below guide to create the necessary VMs.
+Some VMs are needed in order to run Kubernetes & Spark. Those are provisioned to a Proxmox installation using OpenTofu.
 
-### Create VMs
 ```
-vagrant up
-```
+cp proxmox/proxmox_env.tfvars.example proxmox/proxmox_env.tfvars
 
-### SSH connection to VMs
-```
-ssh -i .vagrant/machines/spark-master/virtualbox/private_key vagrant@192.168.56.101
-ssh -i .vagrant/machines/spark-worker-1/virtualbox/private_key vagrant@192.168.56.102
-ssh -i .vagrant/machines/spark-worker-2/virtualbox/private_key vagrant@192.168.56.103
+tofu plan -var-file="proxmox_env.tfvars"
+
+tofu apply -var-file="proxmox_env.tfvars"
 ```
 
-### Pass your personal SSH key (optional)
-```
-ssh-copy-id -i ~/.ssh/id_rsa.pub -o IdentityFile=.vagrant/machines/spark-master/virtualbox/private_key -f vagrant@192.168.56.101
-ssh-copy-id -i ~/.ssh/id_rsa.pub -o IdentityFile=.vagrant/machines/spark-worker-1/virtualbox/private_key -f vagrant@192.168.56.102
-ssh-copy-id -i ~/.ssh/id_rsa.pub -o IdentityFile=.vagrant/machines/spark-worker-2/virtualbox/private_key -f vagrant@192.168.56.103
-```
+Then Ansible is being used to install Spark and Kubernetes accordingly. Relevant playbooks have been prepared.
 
-### Stop VMs
-```
-vagrant halt
-```
-
-### Delete VMs (Force)
-```
-vagrant destroy -f
-```
-
-## Ansible
+## Ansible (Spark Installation)
 
 Below command uses the `--user` argument in order to define with which user will connect to the hosts.
 
 ```
-ansible-playbook -i hosts.ini --user vagrant install_spark.yml
+ansible-playbook -i ./infra/spark_inventory.ini --user tithia ./infra/spark.yml
 ```
-
-## Local Docker environment
-
-The `docker-compose.yaml` file has a preconfigured containerized environment for interracting with the Spark cluster.
-
-Simply `docker compose up` and then execute `docker logs spark` to find the token.
 
 ## Kubernetes
 

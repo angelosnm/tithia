@@ -1,0 +1,3 @@
+proxmox_api_url   = "https://your-proxmox-server:8006/api2/json"
+proxmox_api_token_id      = "xxx"
+proxmox_api_token_secret  = "yyy"
