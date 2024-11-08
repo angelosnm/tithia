@@ -61,7 +61,7 @@ ansible-playbook -i ./infra/spark_inventory.ini --user tithia ./infra/spark.yml
 
 ### Metrics-server
 ```
-kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.7.2/components.yaml
+kubectl apply -f ./kube/metrics-server/metrics-server.yaml
 ```
 
 ### Ingress NGINX Controller
