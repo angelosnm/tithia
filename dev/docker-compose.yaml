@@ -2,6 +2,7 @@ services:
   spark:
     image: quay.io/jupyter/pyspark-notebook:spark-3.5.3
     container_name: spark
+    network_mode: host
     volumes:
       - ./spark_examples:/home/jovyan/work
     ports:
