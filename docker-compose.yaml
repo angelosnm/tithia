@@ -1,7 +1,8 @@
 services:
-  spark:
-    image: quay.io/jupyter/pyspark-notebook:spark-3.5.3
-    container_name: spark
+  spark-notebook:
+    build:
+      context: .
+    container_name: spark-notebook
     network_mode: host
     volumes:
       - ./spark_examples:/home/jovyan/work
