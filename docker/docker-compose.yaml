@@ -5,6 +5,6 @@ services:
     container_name: spark-notebook
     network_mode: host
     volumes:
-      - ./spark_examples:/home/jovyan/work
+      - ../spark_examples:/home/jovyan/work
     ports:
       - 8888:8888

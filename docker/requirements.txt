@@ -1,0 +1,7 @@
+geopandas==1.0.1
+fiona==1.10.1
+shapely==2.0.6
+keplergl==0.3.2
+rasterio==1.4.2
+pydeck==0.9.1
+apache-sedona==1.6.1
