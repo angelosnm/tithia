@@ -1,4 +1,4 @@
 .vagrant/
-spark_examples/.ipynb_checkpoints
+sedona_examples/.ipynb_checkpoints
 proxmox_env.tfvars
 *terraform*

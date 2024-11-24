@@ -1,10 +1,10 @@
 services:
-  spark-notebook:
+  sedona-notebook:
     build:
       context: .
-    container_name: spark-notebook
+    container_name: sedona-notebook
     network_mode: host
     volumes:
-      - ../spark_examples:/home/jovyan/work
+      - ../sedona_examples:/home/jovyan/sedona_examples
     ports:
       - 8888:8888
