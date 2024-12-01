@@ -110,9 +110,7 @@ helm repo add jetstack https://charts.jetstack.io
 
 helm repo update
 
-helm show values jetstack/cert-manager > ./kube/cert-manager/values.yaml
-
-helm upgrade --install cert-manager jetstack/cert-manager -n cert-manager --create-namespace --version 1.15.3 --set crds.enabled=true
+helm upgrade --install cert-manager jetstack/cert-manager -n cert-manager --create-namespace --version 1.16.2 --set crds.enabled=true
 ```
 
 #### HTTP Cluster Issuer Configuration (https://cert-manager.io/docs/configuration/acme/dns01/route53/)
@@ -130,9 +128,7 @@ helm repo add longhorn https://charts.longhorn.io
 
 helm repo update
 
-helm show values longhorn/longhorn > ./kube/longhorn/values.yaml
-
-helm upgrade --install longhorn longhorn/longhorn -n longhorn --create-namespace --version 1.7.1 -f ./kube/longhorn/values.yaml
+helm upgrade --install longhorn longhorn/longhorn -n longhorn --create-namespace --version 1.7.2 -f ./kube/longhorn/values.yaml
 
 k apply -f ./kube/longhorn/certificate.yaml
 ```
@@ -200,7 +196,6 @@ helm repo add jupyterhub https://jupyterhub.github.io/helm-chart/
 
 helm repo update
 
-helm show values jupyterhub/jupyterhub > ./kube/jupyterhub/values.yaml
 ```
 
 Prior installing the Helm chart, a relevant database needs to be created for `JupyterHub` on `Postgres`
