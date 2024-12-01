@@ -57,7 +57,35 @@ Below command uses the `--user` argument in order to define with which user will
 ansible-playbook -i ./infra/spark_inventory.ini --user tithia ./infra/spark.yml
 ```
 
-## Kubernetes
+## Kubernetes (K3s)
+
+### Download and install the K3s Kubernetes distribution (a lightweight Kubernetes installer for single-node or cluster setups).
+curl -sfL https://get.k3s.io | sh -
+
+### Verify that the K3s node is up and running by listing the Kubernetes nodes.
+sudo kubectl get nodes
+
+### Set the KUBECONFIG environment variable to point to your Kubernetes configuration file for kubectl.
+export KUBECONFIG=~/.kube/config
+
+### Create the Kubernetes configuration directory if it doesn't already exist.
+mkdir ~/.kube 2> /dev/null
+
+### Save the raw Kubernetes configuration from K3s into your KUBECONFIG file.
+sudo k3s kubectl config view --raw > "$KUBECONFIG"
+
+### Secure the configuration file by restricting access permissions to the owner only.
+chmod 600 "$KUBECONFIG"
+
+### Verify the nodes again to ensure kubectl is configured and can communicate with the cluster.
+kubectl get nodes
+
+### Retrieve the node token, which is used for joining additional nodes to the K3s cluster.
+sudo cat /var/lib/rancher/k3s/server/node-token
+
+### Install K3s on an additional node and join it to the cluster by specifying the master node's IP and the node token.
+### Replace <master-ip> with the IP address of the master node and <node-token> with the retrieved token from the previous step.
+curl -sfL https://get.k3s.io | K3S_URL=https://<master-ip>:6443 K3S_TOKEN=<node-token> sh -
 
 ### Metrics-server
 ```
