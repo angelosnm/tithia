@@ -59,33 +59,51 @@ ansible-playbook -i ./infra/spark_inventory.ini --user tithia ./infra/spark.yml
 
 ## Kubernetes (K3s)
 
-### Download and install the K3s Kubernetes distribution (a lightweight Kubernetes installer for single-node or cluster setups).
+#### Download and install the K3s Kubernetes distribution (a lightweight Kubernetes installer for single-node or cluster setups).
+```
 curl -sfL https://get.k3s.io | sh -
+```
 
-### Verify that the K3s node is up and running by listing the Kubernetes nodes.
+#### Verify that the K3s node is up and running by listing the Kubernetes nodes.
+```
 sudo kubectl get nodes
+```
 
-### Set the KUBECONFIG environment variable to point to your Kubernetes configuration file for kubectl.
+#### Set the KUBECONFIG environment variable to point to your Kubernetes configuration file for kubectl.
+```
 export KUBECONFIG=~/.kube/config
+```
 
-### Create the Kubernetes configuration directory if it doesn't already exist.
+#### Create the Kubernetes configuration directory if it doesn't already exist.
+```
 mkdir ~/.kube 2> /dev/null
+```
 
-### Save the raw Kubernetes configuration from K3s into your KUBECONFIG file.
+#### Save the raw Kubernetes configuration from K3s into your KUBECONFIG file.
+```
 sudo k3s kubectl config view --raw > "$KUBECONFIG"
+```
 
-### Secure the configuration file by restricting access permissions to the owner only.
+#### Secure the configuration file by restricting access permissions to the owner only.
+```
 chmod 600 "$KUBECONFIG"
+```
 
-### Verify the nodes again to ensure kubectl is configured and can communicate with the cluster.
+#### Verify the nodes again to ensure kubectl is configured and can communicate with the cluster.
+```
 kubectl get nodes
+```
 
-### Retrieve the node token, which is used for joining additional nodes to the K3s cluster.
+#### Retrieve the node token, which is used for joining additional nodes to the K3s cluster.
+```
 sudo cat /var/lib/rancher/k3s/server/node-token
+```
 
-### Install K3s on an additional node and join it to the cluster by specifying the master node's IP and the node token.
-### Replace <master-ip> with the IP address of the master node and <node-token> with the retrieved token from the previous step.
+#### Install K3s on an additional node and join it to the cluster by specifying the master node's IP and the node token.
+#### Replace <master-ip> with the IP address of the master node and <node-token> with the retrieved token from the previous step.
+```
 curl -sfL https://get.k3s.io | K3S_URL=https://<master-ip>:6443 K3S_TOKEN=<node-token> sh -
+```
 
 ### Metrics-server
 ```
@@ -110,7 +128,7 @@ helm repo add jetstack https://charts.jetstack.io
 
 helm repo update
 
-helm upgrade --install cert-manager jetstack/cert-manager -n cert-manager --create-namespace --version 1.16.2 --set crds.enabled=true
+helm upgrade --install cert-manager jetstack/cert-manager -n cert-manager --create-namespace --version 1.15.3 --set crds.enabled=true
 ```
 
 #### HTTP Cluster Issuer Configuration (https://cert-manager.io/docs/configuration/acme/dns01/route53/)
@@ -128,7 +146,7 @@ helm repo add longhorn https://charts.longhorn.io
 
 helm repo update
 
-helm upgrade --install longhorn longhorn/longhorn -n longhorn --create-namespace --version 1.7.2 -f ./kube/longhorn/values.yaml
+helm upgrade --install longhorn longhorn/longhorn -n longhorn --create-namespace --version 1.7.1 --values ./kube/longhorn/values.yaml
 
 k apply -f ./kube/longhorn/certificate.yaml
 ```
@@ -173,6 +191,7 @@ k apply -f ./kube/keycloak
 #### Keywind theme installation
 
 ```
+cd /tmp
 git clone https://github.com/lukin/keywind.git
 cd keywind
 docker run --rm -it -v $(pwd):/app node:20 bash
