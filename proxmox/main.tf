@@ -99,7 +99,7 @@ resource "proxmox_vm_qemu" "kube" {
   }
 
   os_type    = "cloud-init"
-  ipconfig0  = "ip=192.168.18.${120 + count.index}/24,gw=192.168.0.1"
+  ipconfig0  = "ip=192.168.18.${120 + count.index}/24,gw=192.168.18.254"
   nameserver = "1.1.1.1,9.9.9.9"
   ciuser     = "tithia"
   sshkeys    = <<EOF

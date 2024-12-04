@@ -61,7 +61,7 @@ ansible-playbook -i ./infra/spark_inventory.ini --user tithia ./infra/spark.yml
 
 #### Download and install the K3s Kubernetes distribution (a lightweight Kubernetes installer for single-node or cluster setups).
 ```
-curl -sfL https://get.k3s.io | sh -
+curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--disable traefik" sh -s -
 ```
 
 #### Verify that the K3s node is up and running by listing the Kubernetes nodes.
@@ -151,6 +151,16 @@ helm upgrade --install longhorn longhorn/longhorn -n longhorn --create-namespace
 k apply -f ./kube/longhorn/certificate.yaml
 ```
 
+Create basic-auth credentials for ingress
+
+```
+USER=koukos; PASSWORD=metagkisi; echo "${USER}:$(openssl passwd -stdin -apr1 <<< ${PASSWORD})" >> ./kube/longhorn/auth
+
+kubectl -n longhorn create secret generic basic-auth --from-file=./kube/longhorn/auth
+
+k apply -f ./kube/longhorn/ingress.yaml
+```
+
 Create secret with S3 credentials for backup target
 
 ```
@@ -158,16 +168,6 @@ kubectl create secret generic aws-secret \
     --from-literal=AWS_ACCESS_KEY_ID=<your-aws-access-key-id> \
     --from-literal=AWS_SECRET_ACCESS_KEY=<your-aws-secret-access-key> \
     -n longhorn
-```
-
-Create basic-auth credentials for ingress
-
-```
-USER=koukos; PASSWORD=metagkisi; echo "${USER}:$(openssl passwd -stdin -apr1 <<< ${PASSWORD})" >> ./kube/longhorn/auth`
-
-kubectl -n longhorn create secret generic basic-auth --from-file=./kube/longhorn/auth
-
-k apply -f ./kube/longhorn/ingress.yaml
 ```
 
 ### db
