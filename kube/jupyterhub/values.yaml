@@ -432,13 +432,13 @@ singleuser:
     - display_name: "Low"
       description: "Datascience Environment with Sample Notebooks (Resources: 2 GB RAM - 1 CPU)"
       kubespawner_override:
-        image: quay.io/jupyter/pyspark-notebook:spark-3.5.2
+        image: ghcr.io/angelosnm/angelosnm/tithia:basic-7
         cpu_limit: 1
         mem_limit: 2G
     - display_name: "Medium"
       description: "Datascience Environment with Sample Notebooks (Resources: 4 GB RAM - 2 CPU)"
       kubespawner_override:
-        image: quay.io/jupyter/pyspark-notebook:spark-3.5.2
+        image: ghcr.io/angelosnm/angelosnm/tithia:basic-7
         cpu_limit: 2
         mem_limit: 4G
 

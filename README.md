@@ -61,10 +61,6 @@ ansible-playbook -i ./infra/spark_inventory.ini --user tithia ./infra/spark.yml
 
 A specialized container image has been prepared in order to be used by JupyterHub. The relevant content is under the `docker` directory.
 
-```
-docker login -u angelosnm -p <token> ghcr.io
-```
-
 ## Kubernetes (K3s)
 
 #### Download and install the K3s Kubernetes distribution (a lightweight Kubernetes installer for single-node or cluster setups).
@@ -186,6 +182,15 @@ kubectl create secret generic aws-secret \
     -n longhorn
 ```
 
+### minio
+`MinIO` is used for HDFS.
+
+```
+k create ns minio
+k apply -f ./kube/minio
+```
+
+
 ### db
 
 `Postgres` is used as the database of the system. (It is required for Keycloak & JupyterHub)
@@ -230,13 +235,11 @@ Then restart the Keycloak Deployment/Pod
 helm repo add jupyterhub https://jupyterhub.github.io/helm-chart/
 
 helm repo update
-
 ```
 
 Prior installing the Helm chart, a relevant database needs to be created for `JupyterHub` on `Postgres`
 
 ```
-
 helm upgrade jupyterhub jupyterhub/jupyterhub --install --cleanup-on-fail -n jupyterhub --create-namespace --version 3.3.8 --timeout 1200s -f ./kube/jupyterhub/values.yaml --set hub.db.url="postgresql+psycopg2://myuser:mypassword@postgres.db.svc.cluster.local:5432/jupyterhub" --set hub.config.GenericOAuthenticator.client_id="xxx" --set hub.config.GenericOAuthenticator.client_secret="yyy"
 
 k apply -f ./kube/jupyterhub/certificate.yaml

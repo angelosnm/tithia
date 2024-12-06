@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: minio-tithia-scio-services
+  namespace: minio
+spec:
+  secretName: minio-tithia-scio-services-tls
+  issuerRef:
+    name: letsencrypt-http
+    kind: ClusterIssuer
+  commonName: "minio.tithia.scio.services"
+  dnsNames:
+  - "minio.tithia.scio.services"
