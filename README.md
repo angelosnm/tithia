@@ -57,6 +57,14 @@ Below command uses the `--user` argument in order to define with which user will
 ansible-playbook -i ./infra/spark_inventory.ini --user tithia ./infra/spark.yml
 ```
 
+## Docker
+
+A specialized container image has been prepared in order to be used by JupyterHub. The relevant content is under the `docker` directory.
+
+```
+docker login -u angelosnm -p <token> ghcr.io
+```
+
 ## Kubernetes (K3s)
 
 #### Download and install the K3s Kubernetes distribution (a lightweight Kubernetes installer for single-node or cluster setups).
@@ -104,6 +112,14 @@ sudo cat /var/lib/rancher/k3s/server/node-token
 ```
 curl -sfL https://get.k3s.io | K3S_URL=https://<master-ip>:6443 K3S_TOKEN=<node-token> sh -
 ```
+
+#### Taint control plane node to prevent pods scheduling
+```
+kubectl taint nodes tithia-kube-control-plane node-role.kubernetes.io/control-plane:NoSchedule
+```
+
+
+
 
 ### Metrics-server
 ```
