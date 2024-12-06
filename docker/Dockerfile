@@ -1,5 +1,7 @@
 FROM quay.io/jupyter/all-spark-notebook:spark-3.5.2
 
+LABEL org.opencontainers.image.source https://github.com/angelosnm/tithia
+
 USER root
 
 # Update the package list and install Java 8 (required by Scala and Spark)
