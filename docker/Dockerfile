@@ -1,6 +1,6 @@
 FROM quay.io/jupyter/all-spark-notebook:spark-3.5.2
 
-LABEL org.opencontainers.image.source https://github.com/angelosnm/tithia
+LABEL org.opencontainers.image.source=https://github.com/angelosnm/tithia
 
 USER root
 
