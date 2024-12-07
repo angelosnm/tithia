@@ -1,18 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: minio
+  name: minio-ui
   namespace: minio
 spec:
   selector:
     app: minio
   ports:
-    - name: api
-      protocol: TCP
-      port: 9000
-      targetPort: 9000
-    - name: ui
-      protocol: TCP
-      port: 9001
-      targetPort: 9001
+    - protocol: TCP      
+      port: 9090
+      targetPort: 9090
   type: ClusterIP  # Use LoadBalancer if you need external access

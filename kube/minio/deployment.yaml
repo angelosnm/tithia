@@ -15,16 +15,18 @@ spec:
     spec:
       containers:
       - name: minio
-        image: quay.io/minio/minio:RELEASE.2024-04-06T05-26-02Z.fips
-        command: ["minio", "server", "/data", "--console-address", ":9001"]
+        image: quay.io/minio/minio:RELEASE.2024-11-07T00-52-20Z.fips
+        command:
+        - /bin/bash
+        - -c
+        args: 
+        - minio server /data --console-address :9090
         ports:
         - containerPort: 9000
-        - containerPort: 9001
-        env:
-        - name: MINIO_ROOT_USER
-          value: "minioadmin"  # Replace with your access key
-        - name: MINIO_ROOT_PASSWORD
-          value: "minioadmin"  # Replace with your secret key
+        - containerPort: 9090
+        envFrom:
+        - secretRef:
+            name: minio-creds
         volumeMounts:
         - name: storage
           mountPath: /data

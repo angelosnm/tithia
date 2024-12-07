@@ -14,9 +14,9 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: minio
+            name: minio-ui
             port:
-              number: 9001
+              number: 9090
   tls:
   - hosts:
     - minio.tithia.scio.services
