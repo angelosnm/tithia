@@ -5,4 +5,4 @@ keplergl==0.3.2
 rasterio==1.4.2
 pydeck==0.9.1
 apache-sedona==1.6.1
-jupyter_drives==0.0.1
+jupyterlab-s3-browser==0.12.0
