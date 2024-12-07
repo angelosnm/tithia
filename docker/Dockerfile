@@ -32,7 +32,7 @@ ENV PATH="${SCALA_HOME}/bin:${PATH}"
 RUN wget -P /usr/local/spark/jars https://repo1.maven.org/maven2/org/apache/hadoop/hadoop-aws/3.3.4/hadoop-aws-3.3.4.jar
 RUN wget -P /usr/local/spark/jars https://repo1.maven.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.12.777/aws-java-sdk-bundle-1.12.777.jar
 
-RUN wget -P /usr/local/spark/jars https://repo1.maven.org/maven2/org/apache/sedona/sedona-spark-3.5_2.12/1.6.1/sedona-spark-3.5_2.12-1.6.1.jar
+RUN wget -P /usr/local/spark/jars https://repo1.maven.org/maven2/org/apache/sedona/sedona-spark-shaded-3.5_2.12/1.6.1/sedona-spark-shaded-3.5_2.12-1.6.1.jar 
 RUN wget -P /usr/local/spark/jars https://repo1.maven.org/maven2/org/datasyslab/geotools-wrapper/1.6.1-28.2/geotools-wrapper-1.6.1-28.2.jar
 
 USER $NB_USER
