@@ -87,11 +87,7 @@ hub:
   annotations: {}
   command: []
   args: []
-  extraConfig:
-    logoConfig: |
-      import urllib.request
-      urllib.request.urlretrieve("https://tithia-resources.s3.us-east-2.amazonaws.com/branding/icononly_transparent_nobuffer.png", "logo.png")
-      c.JupyterHub.logo_file = 'logo.png'
+  extraConfig: {}
   extraFiles: {}
   extraEnv: {}
   extraContainers: []
