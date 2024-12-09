@@ -377,11 +377,13 @@ singleuser:
       nonPrivateIPs: true
       privateIPs: false
     interNamespaceAccessLabels: ignore
-    allowedIngressPorts: []
+    allowedIngressPorts: # needed for spark connectivity
+      - 2222
   events: true
   extraAnnotations: {}
   extraLabels:
     hub.jupyter.org/network-access-hub: "true"
+    hub.jupyter.org/network-access-singleuser: "true" # needed for spark connectivity
   extraFiles: {}
   extraEnv: {}
   lifecycleHooks: {}
@@ -428,7 +430,7 @@ singleuser:
     - display_name: "Low"
       description: "Datascience Environment with Sample Notebooks (Resources: 2 GB RAM - 1 CPU)"
       kubespawner_override:
-        image: ghcr.io/angelosnm/angelosnm/tithia:basic-9
+        image: ghcr.io/angelosnm/angelosnm/tithia:0.12
         cpu_limit: 1
         mem_limit: 2G
     - display_name: "Medium"
