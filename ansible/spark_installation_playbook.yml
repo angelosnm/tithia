@@ -1,0 +1,180 @@
+- name: Install Apache Spark
+  hosts: spark
+  become: yes
+  vars:
+    SPARK_VERSION: 3.5.2
+    HADOOP_VERSION: 3
+    SPARK_DOWNLOAD_URL: "https://archive.apache.org/dist/spark/spark-{{ SPARK_VERSION }}/spark-{{ SPARK_VERSION }}-bin-hadoop{{ HADOOP_VERSION }}.tgz"
+    SPARK_INSTALL_DIR: /usr/local/spark
+    SCALA_VERSION: 2.12.18
+    SCALA_HOME: /usr/local/scala
+  tasks:
+    - name: Run system updates
+      apt:
+        update_cache: yes
+        upgrade: dist
+        cache_valid_time: 3600
+
+    - name: Install OS packages
+      apt:
+        name: 
+          - acl
+          - software-properties-common
+        state: present
+
+    - name: Install Java
+      apt:
+        name:
+          - openjdk-8-jre
+        state: present
+        update_cache: yes
+
+    - name: Download Scala tarball
+      get_url:
+        url: "https://downloads.lightbend.com/scala/{{ SCALA_VERSION }}/scala-{{ SCALA_VERSION }}.tgz"
+        dest: "/tmp/scala-{{ SCALA_VERSION }}.tgz"
+    
+    - name: Extract Scala tarball
+      ansible.builtin.unarchive:
+        src: "/tmp/scala-{{ SCALA_VERSION }}.tgz"
+        dest: "/usr/local"
+        remote_src: yes
+    
+    - name: Move extracted Scala to target directory
+      ansible.builtin.command:
+        cmd: mv /usr/local/scala-{{ SCALA_VERSION }} {{ SCALA_HOME }}
+    
+    - name: Remove Scala tarball
+      ansible.builtin.file:
+        path: "/tmp/scala-{{ SCALA_VERSION }}.tgz"
+        state: absent
+
+    - name: Create Spark directory
+      ansible.builtin.file:
+        path: "{{ SPARK_INSTALL_DIR }}"
+        state: directory
+
+    - name: Download Spark
+      get_url:
+        url: "{{ SPARK_DOWNLOAD_URL }}"
+        dest: "{{ SPARK_INSTALL_DIR }}/spark-{{ SPARK_VERSION }}-bin-hadoop{{ HADOOP_VERSION }}.tgz"
+
+    - name: Extract Spark
+      unarchive:
+        src: "{{ SPARK_INSTALL_DIR }}/spark-{{ SPARK_VERSION }}-bin-hadoop{{ HADOOP_VERSION }}.tgz"
+        dest: "{{ SPARK_INSTALL_DIR }}"        
+        remote_src: yes
+
+    - name: Change ownership of Spark directory
+      file:
+        path: "{{ SPARK_INSTALL_DIR }}"
+        owner: tithia
+        group: tithia
+        recurse: yes
+
+- name: Configure Spark Master
+  hosts: master
+  become: yes
+  vars:    
+    SPARK_VERSION: 3.5.2
+    HADOOP_VERSION: 3
+    SPARK_INSTALL_DIR: /usr/local/spark
+  tasks:
+    - name: Configure Spark master
+      lineinfile:
+        path: "{{ SPARK_INSTALL_DIR }}//spark-{{ SPARK_VERSION }}-bin-hadoop{{ HADOOP_VERSION }}/conf/spark-env.sh"
+        line: "SPARK_MASTER_HOST={{ groups['master'][0] }}"
+        create: yes
+
+    - name: Change config file ownership
+      file:
+        path: "{{ SPARK_INSTALL_DIR }}/spark-{{ SPARK_VERSION }}-bin-hadoop{{ HADOOP_VERSION }}/conf/spark-env.sh"
+        owner: tithia
+        group: tithia
+        state: file
+    
+    - name: Create Spark systemd service file
+      become: yes
+      copy:
+        dest: /etc/systemd/system/spark.service
+        content: |
+          [Unit]
+          Description=Apache Spark (Master)
+          After=network.target          
+
+          [Service]
+          Type=forking
+          User=tithia
+          Group=tithia
+          ExecStart={{ SPARK_INSTALL_DIR }}/spark-{{ SPARK_VERSION }}-bin-hadoop{{ HADOOP_VERSION }}/sbin/start-master.sh
+          ExecStop={{ SPARK_INSTALL_DIR }}/spark-{{ SPARK_VERSION }}-bin-hadoop{{ HADOOP_VERSION }}/sbin/stop-master.sh
+          Restart=on-failure
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Reload systemd daemon
+      become: yes
+      command: systemctl daemon-reload
+
+    - name: Enable Spark service
+      become: yes
+      systemd:
+        name: spark
+        enabled: yes
+
+    - name: Start Spark service
+      become: yes
+      systemd:
+        name: spark
+        state: started
+
+- name: Configure Spark Workers
+  hosts: workers
+  become: yes
+  vars:
+    SPARK_VERSION: 3.5.2
+    HADOOP_VERSION: 3
+    SPARK_INSTALL_DIR: /usr/local/spark
+  tasks:
+    - name: Add Spark master to workers file
+      lineinfile:
+        path: "{{ SPARK_INSTALL_DIR }}/spark-{{ SPARK_VERSION }}-bin-hadoop{{ HADOOP_VERSION }}/conf/workers"
+        line: "{{ groups['master'][0] }}"
+        create: yes
+
+    - name: Create Spark systemd service file
+      become: yes
+      copy:
+        dest: /etc/systemd/system/spark.service
+        content: |
+          [Unit]
+          Description=Apache Spark (Worker)
+          After=network.target          
+
+          [Service]
+          Type=forking
+          User=tithia
+          Group=tithia
+          ExecStart={{ SPARK_INSTALL_DIR }}/spark-{{ SPARK_VERSION }}-bin-hadoop{{ HADOOP_VERSION }}/sbin/start-worker.sh spark://{{ groups['master'][0] }}:7077
+          ExecStop={{ SPARK_INSTALL_DIR }}/spark-{{ SPARK_VERSION }}-bin-hadoop{{ HADOOP_VERSION }}/sbin/stop-worker.sh
+          Restart=on-failure
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Reload systemd daemon
+      become: yes
+      command: systemctl daemon-reload
+
+    - name: Enable Spark service
+      become: yes
+      systemd:
+        name: spark
+        enabled: yes
+
+    - name: Start Spark service
+      become: yes
+      systemd:
+        name: spark
+        state: started
