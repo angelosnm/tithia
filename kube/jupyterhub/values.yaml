@@ -378,7 +378,8 @@ singleuser:
       privateIPs: false
     interNamespaceAccessLabels: ignore
     allowedIngressPorts: # needed for spark connectivity
-      - 2222
+      - 2222 # spark.driver.port
+      - 36859 # spark.blockManager.port"
   events: true
   extraAnnotations: {}
   extraLabels:
