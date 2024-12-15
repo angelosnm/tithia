@@ -29,8 +29,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          context: ./docker
-          file: ./docker/Dockerfile
+          context: ./docker/tithia-spark
+          file: ./docker/tithia-spark/Dockerfile
           push: true
           tags: |
             ghcr.io/${{ github.repository_owner }}/${{ github.repository }}-spark:latest
