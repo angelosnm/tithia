@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: spark-master
-          image: apache/spark:3.5.2
+          image: ghcr.io/angelosnm/angelosnm/tithia-spark:3.5.2-0.1
           command: ["/bin/bash", "-c", "/opt/spark/bin/spark-class org.apache.spark.deploy.master.Master"]
           ports:
             - containerPort: 7077 # Spark Master port

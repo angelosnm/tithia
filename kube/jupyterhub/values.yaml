@@ -431,19 +431,19 @@ singleuser:
     - display_name: "Low"
       description: "Datascience Environment with Sample Notebooks (Resources: 4 GB RAM - 2 CPU)"
       kubespawner_override:
-        image: ghcr.io/angelosnm/angelosnm/tithia:0.12
+        image: ghcr.io/angelosnm/angelosnm/tithia-jupyter:0.2
         cpu_limit: 2
         mem_limit: 4G
     - display_name: "Medium"
       description: "Datascience Environment with Sample Notebooks (Resources: 16 GB RAM - 4 CPU)"
       kubespawner_override:
-        image: ghcr.io/angelosnm/angelosnm/tithia:0.12
+        image: ghcr.io/angelosnm/angelosnm/tithia-jupyter:0.2
         cpu_limit: 4
         mem_limit: 16G
     - display_name: "High"
       description: "Datascience Environment with Sample Notebooks (Resources: 32 GB RAM - 8 CPU)"
       kubespawner_override:
-        image: ghcr.io/angelosnm/angelosnm/tithia:0.12
+        image: ghcr.io/angelosnm/angelosnm/tithia-jupyter:0.2
         cpu_limit: 8
         mem_limit: 32G
 

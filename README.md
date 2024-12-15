@@ -263,4 +263,14 @@ k apply -f jupyterhub/ingress.yaml
 
 ### Spark
 
+```bash
+k apply -f spark/deployment-master.yaml
+
+k apply -f spark/
+```
+
+Create a `ConfigMap` for passing Spark configurations
+
+```bash
 kubectl create configmap spark-config --from-file=spark-defaults.conf --from-file=spark-env.sh -n spark
+```
