@@ -366,7 +366,7 @@ singleuser:
     blockWithIptables: true
     ip: 169.254.169.254
   networkPolicy:
-    enabled: true
+    enabled: false
     ingress: []
     egress: []
     egressAllowRules:

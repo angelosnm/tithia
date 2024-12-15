@@ -1,12 +1,12 @@
-name: Build and Push Docker Image to GHCR
+name: Build and Push Tithia Spark Docker Image to GHCR
 
 on:
   push:
     branches:
       - main
     paths:
-      - '.github/workflows/docker-build.yml'
-      - 'docker/**'
+      - '.github/workflows/tithia-spark-docker-build.yml'
+      - 'docker/tithia-spark/**'
 
 jobs:
   build-and-push:
@@ -33,5 +33,5 @@ jobs:
           file: ./docker/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:latest
-            ghcr.io/${{ github.repository_owner }}/${{ github.repository }}:0.${{ github.run_number }}
+            ghcr.io/${{ github.repository_owner }}/${{ github.repository }}-spark:latest
+            ghcr.io/${{ github.repository_owner }}/${{ github.repository }}-spark:3.5.2-0.${{ github.run_number }}

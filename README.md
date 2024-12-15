@@ -260,3 +260,7 @@ k apply -f jupyterhub/certificate.yaml
 
 k apply -f jupyterhub/ingress.yaml
 ```
+
+### Spark
+
+kubectl create configmap spark-config --from-file=spark-defaults.conf --from-file=spark-env.sh -n spark
