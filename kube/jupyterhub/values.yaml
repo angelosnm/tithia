@@ -385,7 +385,14 @@ singleuser:
   extraLabels:
     hub.jupyter.org/network-access-hub: "true"
     hub.jupyter.org/network-access-singleuser: "true" # needed for spark connectivity
-  extraFiles: {}
+  extraFiles:
+    # The file key is just a reference that doesn't influence the
+    # actual file name.
+    singleUserConfig:
+      mountPath: /usr/local/etc/jupyter/jupyter_server_config.json
+      data:
+        ServerApp:
+          iopub_data_rate_limit: 100000000
   extraEnv: {}
   lifecycleHooks: {}
   initContainers: []

@@ -3,6 +3,8 @@ kind: Ingress
 metadata:
   name: jupyterhub
   namespace: jupyterhub
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "100m"
 spec:
   rules:
   - host: jupyterhub.tithia.scio.services
