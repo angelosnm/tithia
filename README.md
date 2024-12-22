@@ -10,7 +10,7 @@ The Tithia platform is a well-architected solution for geospatial data analysis 
 
 # Architecture
 
-![alt text](resources/images/architecture.jpg)
+![alt text](resources/images/architecture.png)
 
 ## Key Components and Technologies
 
