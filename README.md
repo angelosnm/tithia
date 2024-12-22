@@ -1,5 +1,7 @@
 # Tithia
 
+![alt text](resources/images/fulllogo_transparent_nobuffer.png)
+
 Born from the Sky and Earth, <em>Tithia</em> is the perfect blend of two powerful forces. From the sky, we gather satellite data and maps, providing a bird's-eye view of our world. From the Earth, we harness geospatial insights—the very ground we walk on, rich with invaluable information.
 
 Together, they create <em>Tithia</em>. A cutting-edge platform designed to bring you the best of both worlds. Just as the union of Sky and Earth gave birth to <em>Tithia</em> in ancient times, today, our platform seamlessly merges advanced satellite imagery with precise geospatial data, offering unparalleled insights.
@@ -34,37 +36,13 @@ The Tithia platform is a well-architected solution for geospatial data analysis 
 
 ## Infrastructre
 
-Ansible is being used to install Spark and Kubernetes accordingly. Relevant playbooks have been prepared.
-
-## Ansible (Spark Installation)
+`Ansible` is being used to deploy a Kubernetes cluster (K3s) on an existing node pool
 
 Below command uses the `--user` argument in order to define with which user will connect to the hosts.
 
 ```bash
 cd ansible
-ansible-playbook -i spark_inventory.ini --user tithia spark_installation_playbook.yml
-```
-
-## OS Configuration
-
-In order for Spark cluster to communicate with Kubernetes in terms of sending PySpark jobs from within JupyterHub, the below network configurations need to be applied
-
-### Spark nodes
-```bash
-sudo ip route add 10.42.0.0/16 via 192.168.18.120
-```
-
-### On Kubernetes (control-plane node)
-```bash
-sudo iptables -A FORWARD -s 10.42.0.0/16 -j ACCEPT
-sudo iptables -A FORWARD -d 10.42.0.0/16 -j ACCEPT
-```
-
-Persist these rules using a firewall management tool or saving them directly to `/etc/iptables/rules.v4`
-
-```bash
-sudo sysctl net.ipv4.ip_forward=1
-echo "net.ipv4.ip_forward = 1" | sudo tee -a /etc/sysctl.conf
+ansible-playbook -i inventory.ini --user tithia k3s_provision.yml
 ```
 
 ## Docker

@@ -3,6 +3,8 @@ kind: Ingress
 metadata:
   name: minio-s3
   namespace: minio
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "100g"
 spec:
   rules:
   - host: s3.minio.tithia.scio.services

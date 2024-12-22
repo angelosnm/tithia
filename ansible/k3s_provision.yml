@@ -1,0 +1,59 @@
+- name: Setup K3s Cluster
+  hosts: control-plane:workers
+  become: true
+  tasks:
+
+  - name: Install required packages
+    apt:
+      name:
+        - curl
+        - sudo
+      state: present
+      update_cache: yes
+
+- name: Configure Control Plane Node
+  hosts: control-plane
+  become: true
+  tasks:
+
+  - name: Install K3s on control plane
+    shell: |
+      curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--disable traefik" sh -s -
+    args:
+      executable: /bin/bash
+
+  - name: Export KUBECONFIG
+    shell: |
+      export KUBECONFIG=~/.kube/config
+      mkdir -p ~/.kube
+      sudo k3s kubectl config view --raw > "${KUBECONFIG}"
+      chmod 600 "${KUBECONFIG}"
+    args:
+      executable: /bin/bash
+
+  - name: Retrieve node token
+    shell: cat /var/lib/rancher/k3s/server/node-token
+    register: node_token
+    args:
+      executable: /bin/bash
+
+- name: Configure Worker Nodes
+  hosts: workers
+  become: true
+  tasks:
+
+  - name: Install K3s on workers
+    shell: |
+      curl -sfL https://get.k3s.io | K3S_URL=https://{{ hostvars['control-plane'].ansible_host }}:6443 K3S_TOKEN={{ hostvars['control-plane'].node_token.stdout }} sh -
+    args:
+      executable: /bin/bash
+
+- name: Post-installation setup on Control Plane
+  hosts: control-plane
+  become: true
+  tasks:
+
+  - name: Taint control plane node
+    shell: kubectl taint nodes $(hostname) node-role.kubernetes.io/control-plane:NoSchedule
+    args:
+      executable: /bin/bash
