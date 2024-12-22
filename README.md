@@ -1,5 +1,3 @@
-# Tithia
-
 ![alt text](resources/images/fulllogo_transparent_nobuffer.png)
 
 Born from the Sky and Earth, <em>Tithia</em> is the perfect blend of two powerful forces. From the sky, we gather satellite data and maps, providing a bird's-eye view of our world. From the Earth, we harness geospatial insights—the very ground we walk on, rich with invaluable information.
